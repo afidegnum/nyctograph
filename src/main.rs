@@ -158,17 +158,30 @@ async fn MyDomNodes<G: Html>(cx: Scope<'_>) -> View<G> {
         .unwrap();
     let count: u32 = count_node_records(&idb, None).await.unwrap();
 
-    let cnt = create_signal(cx, count);
+    let node_list = fetch_json_nodes(&idb, None).await.unwrap();
+
+    let nlist = create_signal(cx, node_list);
 
     view! { cx,
-        h2 {
-            (format!("{}", cnt))
+        ul {
+            Keyed {
+                iterable: nlist,
+                view: |cx, x| view! { cx,
+                    // li { (x.tag) }
+
+                     (View::new_node(
+                         {
+                             let el = G::element_from_tag(&x.tag);
+                             el.append_child(&G::text_node(&x.text));
+                             el
+                             }))
+                }
+
+                ,
+                key: |x| x.id,
+            }
         }
     }
-}
-
-fn DragDrop<G: Html>(cs: Scope) -> View<G> {
-    view! {cx, p{"Hi"}}
 }
 
 #[component]
