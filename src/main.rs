@@ -152,7 +152,7 @@ async fn clear_node_records(rexie: &Rexie) -> Result<()> {
 #[component]
 async fn MyDomNodes<G: Html>(cx: Scope<'_>) -> View<G> {
     let mut idb = dom_db().await;
-    let iidb = Rc::new(idb);
+    //let iidb = Rc::new(idb);
     clear_node_records(&idb).await.unwrap();
 
     insert_node(&idb, "h3", "This Text", 0).await.unwrap();
@@ -161,7 +161,8 @@ async fn MyDomNodes<G: Html>(cx: Scope<'_>) -> View<G> {
         .unwrap();
 
     // let btn_insert_node = insert_node(&mut idb, "h3", "This Text", 4).await.unwrap();
-    let idb = &idb;
+    //    let idb = &idb;
+    let idb = Rc::new(idb);
     let idb = idb.clone();
     let btn_click = move |_| {
         spawn_local_scoped(cx, async move {
