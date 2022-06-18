@@ -776,16 +776,16 @@ imports.wbg.__wbindgen_memory = function() {
     const ret = wasm.memory;
     return addHeapObject(ret);
 };
-imports.wbg.__wbindgen_closure_wrapper181 = function(arg0, arg1, arg2) {
-    const ret = makeMutClosure(arg0, arg1, 110, __wbg_adapter_34);
+imports.wbg.__wbindgen_closure_wrapper182 = function(arg0, arg1, arg2) {
+    const ret = makeMutClosure(arg0, arg1, 111, __wbg_adapter_34);
     return addHeapObject(ret);
 };
-imports.wbg.__wbindgen_closure_wrapper3410 = function(arg0, arg1, arg2) {
-    const ret = makeMutClosure(arg0, arg1, 166, __wbg_adapter_37);
+imports.wbg.__wbindgen_closure_wrapper3419 = function(arg0, arg1, arg2) {
+    const ret = makeMutClosure(arg0, arg1, 167, __wbg_adapter_37);
     return addHeapObject(ret);
 };
-imports.wbg.__wbindgen_closure_wrapper5667 = function(arg0, arg1, arg2) {
-    const ret = makeMutClosure(arg0, arg1, 238, __wbg_adapter_40);
+imports.wbg.__wbindgen_closure_wrapper5676 = function(arg0, arg1, arg2) {
+    const ret = makeMutClosure(arg0, arg1, 239, __wbg_adapter_40);
     return addHeapObject(ret);
 };
 
@@ -820,7 +820,7 @@ function initSync(bytes) {
 
 async function init(input) {
     if (typeof input === 'undefined') {
-        input = new URL('nyctograph-72c98d46597a92d3_bg.wasm', import.meta.url);
+        input = new URL('nyctograph-bc7f9019855dc03b_bg.wasm', import.meta.url);
     }
     const imports = getImports();
 
