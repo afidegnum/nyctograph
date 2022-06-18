@@ -136,7 +136,7 @@ async fn count_node_records(rexie: &Rexie, key_range: Option<&KeyRange>) -> Resu
 
     nodelist.count(key_range).await
 }
-
+// add context
 async fn clear_node_records(rexie: &Rexie) -> Result<()> {
     let transaction = rexie.transaction(&["domnodes"], TransactionMode::ReadWrite);
     assert!(transaction.is_ok());
