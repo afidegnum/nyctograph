@@ -97,6 +97,7 @@ async fn insert_node(rexie: &Rexie, tag: &str, text: &str, order: u16) -> Result
 
     transaction.commit().await?;
     Ok(num_traits::cast(local_node_id.as_f64().unwrap()).unwrap())
+    // modify to return last inserted ID
 }
 
 async fn fetch_json_nodes(rexie: &Rexie, direction: Option<Direction>) -> Result<Vec<DomRecord>> {
@@ -156,11 +157,25 @@ async fn MyDomNodes<G: Html>(cx: Scope<'_>) -> View<G> {
     insert_node(&idb, "h1", "Another Text Text", 1)
         .await
         .unwrap();
+
+    let state = create_signal(cx, 0u32);
+    let state_button = state.set(insert_node(&idb, "h3", "This Text", 0).await.unwrap());
+
+    let btn_insert_node = insert_node(&idb, "h3", "This Text", 0).await.unwrap();
+
+    let buton_memo = create_memo(cx, btn_insert_node);
+
     let count: u32 = count_node_records(&idb, None).await.unwrap();
 
     let node_list = fetch_json_nodes(&idb, None).await.unwrap();
 
     let nlist = create_signal(cx, node_list);
+    let last_inserted_node = create_signal(
+        cx,
+        insert_node(&idb, "h3", "This Text", 0)
+            .await
+            .unwrap_or_default(),
+    );
 
     view! { cx,
         ul {
@@ -180,7 +195,9 @@ async fn MyDomNodes<G: Html>(cx: Scope<'_>) -> View<G> {
                 ,
                 key: |x| x.id,
             }
+
         }
+            button(on:click=buton_memo ){"insert"}
     }
 }
 
