@@ -1,12 +1,12 @@
 use rexie::*;
 use serde::Deserialize;
 use serde::Serialize;
+use std::rc::Rc;
 use sycamore::futures::spawn_local_scoped;
 use sycamore::prelude::*;
 use sycamore::suspense::{use_transition, Suspense};
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
-
 /*
 -  List elements
   Add/Remove Elements
@@ -152,6 +152,7 @@ async fn clear_node_records(rexie: &Rexie) -> Result<()> {
 #[component]
 async fn MyDomNodes<G: Html>(cx: Scope<'_>) -> View<G> {
     let mut idb = dom_db().await;
+    let iidb = Rc::new(idb);
     clear_node_records(&idb).await.unwrap();
 
     insert_node(&idb, "h3", "This Text", 0).await.unwrap();
@@ -159,12 +160,15 @@ async fn MyDomNodes<G: Html>(cx: Scope<'_>) -> View<G> {
         .await
         .unwrap();
 
-    let btn_insert_node = insert_node(&mut idb, "h3", "This Text", 4).await.unwrap();
+    // let btn_insert_node = insert_node(&mut idb, "h3", "This Text", 4).await.unwrap();
 
     let btn_click = move |_| {
         spawn_local_scoped(cx, async move {
             // let _ = btn_insert_node;
-            insert_node(&idb, "h3", "This Text", 4).await.unwrap();
+
+            let fdb = iidb.clone();
+
+            insert_node(&fdb, "h3", "This Text", 4).await.unwrap();
         })
     };
 
