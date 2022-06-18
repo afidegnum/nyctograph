@@ -1,6 +1,7 @@
 use rexie::*;
 use serde::Deserialize;
 use serde::Serialize;
+use sycamore::futures::spawn_local_scoped;
 use sycamore::prelude::*;
 use sycamore::suspense::{use_transition, Suspense};
 use uuid::Uuid;
@@ -158,12 +159,13 @@ async fn MyDomNodes<G: Html>(cx: Scope<'_>) -> View<G> {
         .await
         .unwrap();
 
-    let state = create_signal(cx, 0u32);
-    let state_button = state.set(insert_node(&idb, "h3", "This Text", 0).await.unwrap());
+    let btn_insert_node = insert_node(&idb, "h3", "This Text", 4).await.unwrap();
 
-    let btn_insert_node = insert_node(&idb, "h3", "This Text", 0).await.unwrap();
-
-    let buton_memo = create_memo(cx, btn_insert_node);
+    let btn_click = move |_| {
+        spawn_local_scoped(cx, async move {
+            let _ = btn_insert_node;
+        })
+    };
 
     let count: u32 = count_node_records(&idb, None).await.unwrap();
 
@@ -197,7 +199,7 @@ async fn MyDomNodes<G: Html>(cx: Scope<'_>) -> View<G> {
             }
 
         }
-            button(on:click=buton_memo ){"insert"}
+            button(on:click=btn_click ){"insert"}
     }
 }
 
