@@ -161,14 +161,12 @@ async fn MyDomNodes<G: Html>(cx: Scope<'_>) -> View<G> {
         .unwrap();
 
     // let btn_insert_node = insert_node(&mut idb, "h3", "This Text", 4).await.unwrap();
-
+    let idb = &idb;
+    let idb = idb.clone();
     let btn_click = move |_| {
         spawn_local_scoped(cx, async move {
             // let _ = btn_insert_node;
-
-            let fdb = iidb.clone();
-
-            insert_node(&fdb, "h3", "This Text", 4).await.unwrap();
+            insert_node(&idb, "h3", "This Text", 4).await.unwrap();
         })
     };
 
