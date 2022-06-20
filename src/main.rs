@@ -8,30 +8,6 @@ use sycamore::suspense::{use_transition, Suspense};
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
 
-/*
--  List elements
-  Add/Remove Elements
-ElementFormatting
-Select
-
-[
-{ "uuid" : "adsa234", "tag" : "h1", "text" : "This is the heading", "order" : 0 },
-{ "uuid" : "adsa234", "tag" : "p", "text" : "Welcome to the page", "order" : 1 },
-{ "uuid" : "adsa234", "tag" : "p", "text" : "another line", "order" : 2 },
-{ "uuid" : "adsa234", "tag" : "ul", "text" : ["item1", "item2", "item3"], "order" : 3 },
-{ "uuid" : "adsa234", "tag" : "p", "text" : "another line", "order" : 4 },
-{ "uuid" : "adsa234", "tag" : "table", "text" : ["col1", "col2"], ["row1-col1", "row2-col3"], "order" : 3 },
-]
-
-workflow:
-load-json
-single-node-from-json
-node-list-fron-json
-add-to-node-list
-remove-to-node-list
-
-*/
-
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct JsonFrontDom {
     pub uuid: Uuid,
@@ -89,37 +65,6 @@ impl AppState {
     //     self.todos.modify().retain(|todo| todo.get().id != id);
     // }
 
-    // fn todos_left(&self) -> usize {
-    //     self.todos.get().iter().fold(
-    //         0,
-    //         |acc, todo| if todo.get().completed { acc } else { acc + 1 },
-    //     )
-    // }
-
-    // fn toggle_complete_all(&self) {
-    //     if self.todos_left() == 0 {
-    //         // make all todos active
-    //         for todo in self.todos.get().iter() {
-    //             if todo.get().completed {
-    //                 todo.set(Todo {
-    //                     completed: false,
-    //                     ..todo.get().as_ref().clone()
-    //                 })
-    //             }
-    //         }
-    //     } else {
-    //         // make all todos completed
-    //         for todo in self.todos.get().iter() {
-    //             if !todo.get().completed {
-    //                 todo.set(Todo {
-    //                     completed: true,
-    //                     ..todo.get().as_ref().clone()
-    //                 })
-    //             }
-    //         }
-    //     }
-    // }
-
     // fn clear_completed(&self) {
     //     self.todos.modify().retain(|todo| !todo.get().completed);
     // }
@@ -142,32 +87,6 @@ async fn dom_db() -> Rexie {
 
     rexie.unwrap()
 }
-
-// async fn insert_node_state(rexie: &Rexie, cnt: AppState) -> Result<()> {
-//     let transaction = rexie.transaction(&["domnodes"], TransactionMode::ReadWrite);
-//     assert!(transaction.is_ok());
-//     let transaction = transaction.unwrap();
-
-//     let local_nodes = transaction.store("domnodes");
-//     assert!(local_nodes.is_ok());
-//     let local_nodes = local_nodes.unwrap();
-
-//     let uuid = Uuid::new_v4();
-
-//     let local_node = JsonDom {
-//         uuid,
-//         tag,
-//         text,
-//         order,
-//     };
-
-//     let local_node = serde_wasm_bindgen::to_value(&local_node).unwrap();
-//     let local_node_id = local_nodes.add(&local_node, None).await?;
-
-//     transaction.commit().await?;
-//     Ok(())
-//     // modify to return last inserted ID
-// }
 
 async fn insert_node(rexie: &Rexie, tag: &str, text: &str, order: u16) -> Result<u32> {
     let transaction = rexie.transaction(&["domnodes"], TransactionMode::ReadWrite);
@@ -296,48 +215,7 @@ async fn App<G: Html>(cx: Scope<'_>) -> View<G> {
             content.track();
             //log::debug!("Content -> {:#?}", content.get());
         }
-
-        // log::debug!("App State -> {:#?}", app_state.contents.get());
-        // log::debug!("App State -> {:#?}", &node_list);
-
-        // insert_node_state(&idb, app_state.contents.tag.get().as_ref())
-        //     .await
-        //     .unwrap();
-
-        // local_storage
-        //     .set_item(
-        //         KEY,
-        //         &serde_json::to_string(app_state.todos.get().as_ref()).unwrap(),
-        //     )
-        //     .unwrap();
     });
-
-    // let dbcontents = if let Ok(Some(app_state)) = fetch_json_nodes(&idb, None).await.unwrap() {
-    //     serde_json::from_str(&app_state).unwrap_or_else(|_| create_rc_signal(Vec::new()))
-    // } else {
-    //     create_rc_signal(Vec::new())
-    // };
-
-    // let todos = if let Ok(Some(app_state)) = local_storage.get_item(KEY) {
-    //     serde_json::from_str(&app_state).unwrap_or_else(|_| create_rc_signal(Vec::new()))
-    // } else {
-    //     create_rc_signal(Vec::new())
-    // };
-    // let app_state = AppState { contents };
-    // provide_context(cx, app_state);
-    // // Set up an effect that runs a function anytime app_state.todos changes
-    // create_effect(cx, move || {
-    //     let app_state = use_context::<AppState>(cx);
-    //     for todo in app_state.todos.get().iter() {
-    //         todo.track();
-    //     }
-    //     local_storage
-    //         .set_item(
-    //             KEY,
-    //             &serde_json::to_string(app_state.todos.get().as_ref()).unwrap(),
-    //         )
-    //         .unwrap();
-    // });
 
     view! { cx,
         div(class="todomvc-wrapper") {
@@ -354,12 +232,6 @@ async fn App<G: Html>(cx: Scope<'_>) -> View<G> {
 }
 #[component]
 fn TextNodes<G: Html>(cx: Scope<'_>) -> View<G> {
-    // let idb = dom_db().await;
-    // // let nodectx = use_context::<RcSignal<DomRecord>>(cx);
-    // let node_list = fetch_json_nodes(&idb, None).await.unwrap();
-    // clear_node_records(&idb).await.unwrap();
-    // // let idb = create_ref(cx, idb);
-    // let nlist = create_signal(cx, node_list);
     let app_state = use_context::<AppState>(cx);
 
     // let node_list = app_state
@@ -370,83 +242,23 @@ fn TextNodes<G: Html>(cx: Scope<'_>) -> View<G> {
     //     // .cloned()
     //     .collect::<Vec<_>>();
 
-    let node_list: &ReadSignal<DomRecord> = create_memo(cx, || {
+    let node_list = create_memo(cx, || {
         app_state
             .contents
             .get()
             .iter()
             // .map(|content| content.get())
-            // .cloned()
-            .collect()
+            .cloned()
+            .collect::<Vec<_>>()
     });
 
-    log::debug!("Content -> {:#?}", node_list);
+    log::debug!("Content -> {:#?}", node_list.get());
 
     view! { cx,
             p(){""}
-        // ul {
-        //     Keyed {
-        //         iterable: node_list,
-        //         view: |cx, x| view! { cx,
-        //             // li { (x.tag) }
-
-        //              (View::new_node(
-        //                  {
-        //                      let el = G::element_from_tag(&x.tag);
-        //                      el.append_child(&G::text_node(&x.text));
-        //                      el
-        //                      }))
-        //         }
-
-        //         ,
-        //         key: |x| x.id,
-        //     }
-
-        // }
-
-    }
-}
-//
-#[component]
-async fn MyDomNodes<G: Html>(cx: Scope<'_>) -> View<G> {
-    let idb = dom_db().await;
-    //let iidb = Rc::new(idb);
-    clear_node_records(&idb).await.unwrap();
-
-    insert_node(&idb, "h3", "This Text", 0).await.unwrap();
-    insert_node(&idb, "h1", "Another Text Text", 1)
-        .await
-        .unwrap();
-
-    // let btn_insert_node = insert_node(&mut idb, "h3", "This Text", 4).await.unwrap();
-
-    // let idb = Rc::new(idb);
-    // let idb = idb.clone();
-    let idb = create_ref(cx, idb);
-    let mut btn_click = move |_| {
-        spawn_local_scoped(cx, async move {
-            // let _ = btn_insert_node;
-            // let idb = &idb;
-            insert_node(&idb, "h3", "This Text", 4).await.unwrap();
-        })
-    };
-
-    let count: u32 = count_node_records(&idb, None).await.unwrap();
-
-    let node_list = fetch_json_nodes(&idb, None).await.unwrap();
-
-    let nlist = create_signal(cx, node_list);
-    let last_inserted_node = create_signal(
-        cx,
-        insert_node(&idb, "h3", "This Text", 0)
-            .await
-            .unwrap_or_default(),
-    );
-
-    view! { cx,
         ul {
             Keyed {
-                iterable: nlist,
+                iterable: node_list,
                 view: |cx, x| view! { cx,
                     // li { (x.tag) }
 
@@ -463,10 +275,10 @@ async fn MyDomNodes<G: Html>(cx: Scope<'_>) -> View<G> {
             }
 
         }
-            button(on:click=btn_click ){"insert"}
 
     }
 }
+//
 
 #[component]
 pub fn Copyright<G: Html>(cx: Scope) -> View<G> {

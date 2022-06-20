@@ -779,12 +779,12 @@ imports.wbg.__wbindgen_memory = function() {
     const ret = wasm.memory;
     return addHeapObject(ret);
 };
-imports.wbg.__wbindgen_closure_wrapper3228 = function(arg0, arg1, arg2) {
-    const ret = makeMutClosure(arg0, arg1, 182, __wbg_adapter_34);
+imports.wbg.__wbindgen_closure_wrapper3186 = function(arg0, arg1, arg2) {
+    const ret = makeMutClosure(arg0, arg1, 175, __wbg_adapter_34);
     return addHeapObject(ret);
 };
-imports.wbg.__wbindgen_closure_wrapper5472 = function(arg0, arg1, arg2) {
-    const ret = makeMutClosure(arg0, arg1, 253, __wbg_adapter_37);
+imports.wbg.__wbindgen_closure_wrapper5430 = function(arg0, arg1, arg2) {
+    const ret = makeMutClosure(arg0, arg1, 246, __wbg_adapter_37);
     return addHeapObject(ret);
 };
 
@@ -819,7 +819,7 @@ function initSync(bytes) {
 
 async function init(input) {
     if (typeof input === 'undefined') {
-        input = new URL('nyctograph-ed18d5f6d5ac22b4_bg.wasm', import.meta.url);
+        input = new URL('nyctograph-55d3e08c75839857_bg.wasm', import.meta.url);
     }
     const imports = getImports();
 
