@@ -151,6 +151,9 @@ async fn clear_node_records(rexie: &Rexie) -> Result<()> {
 
 #[component]
 async fn MyDomNodes<G: Html>(cx: Scope<'_>) -> View<G> {
+    // A trigger to force the signal to update.
+    let trigger = create_signal(cx, ());
+
     let idb = dom_db().await;
     //let iidb = Rc::new(idb);
     clear_node_records(&idb).await.unwrap();
@@ -170,6 +173,7 @@ async fn MyDomNodes<G: Html>(cx: Scope<'_>) -> View<G> {
             // let _ = btn_insert_node;
             // let idb = &idb;
             insert_node(&idb, "h3", "This Text", 4).await.unwrap();
+            trigger.set(());
         })
     };
 
@@ -178,12 +182,20 @@ async fn MyDomNodes<G: Html>(cx: Scope<'_>) -> View<G> {
     let node_list = fetch_json_nodes(&idb, None).await.unwrap();
 
     let nlist = create_signal(cx, node_list);
-    let last_inserted_node = create_signal(
-        cx,
-        insert_node(&idb, "h3", "This Text", 0)
-            .await
-            .unwrap_or_default(),
-    );
+    create_effect(cx, move || {
+        spawn_local_scoped(cx, async move {
+            trigger.track();
+            log::info!("test");
+            let node_list = fetch_json_nodes(&idb, None).await.unwrap();
+            nlist.set(node_list);
+        });
+    });
+    // let last_inserted_node = create_signal(
+    //     cx,
+    //     insert_node(&idb, "h3", "This Text", 0)
+    //         .await
+    //         .unwrap_or_default(),
+    // );
 
     view! { cx,
         ul {
