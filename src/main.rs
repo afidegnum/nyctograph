@@ -2,7 +2,7 @@ use rexie::*;
 use serde::Deserialize;
 use serde::Serialize;
 // use std::rc::Rc;
-use sycamore::futures::spawn_local_scoped;
+// use sycamore::futures::spawn_local_scoped;
 use sycamore::prelude::*;
 use sycamore::suspense::{use_transition, Suspense};
 use uuid::Uuid;
@@ -230,55 +230,62 @@ async fn App<G: Html>(cx: Scope<'_>) -> View<G> {
         }
     }
 }
+
 #[component]
 fn TextNodes<G: Html>(cx: Scope<'_>) -> View<G> {
     let app_state = use_context::<AppState>(cx);
 
-    // let node_list = app_state
-    //     .contents
-    //     .get()
-    //     .iter()
-    //     .map(|content| content.get())
-    //     // .cloned()
-    //     .collect::<Vec<_>>();
-
-    let node_list = create_memo(cx, || {
+    let node_vect = create_memo(cx, || {
         app_state
             .contents
             .get()
             .iter()
-            // .map(|content| content.get())
-            .cloned()
+            .map(|content| content.get())
             .collect::<Vec<_>>()
     });
 
-    log::debug!("Content -> {:#?}", node_list.get());
-
     view! { cx,
-            p(){""}
-        ul {
-            Keyed {
-                iterable: node_list,
-                view: |cx, x| view! { cx,
-                    // li { (x.tag) }
+                            p(){(format!("----"))}
 
-                     (View::new_node(
-                         {
-                             let el = G::element_from_tag(&x.tag);
-                             el.append_child(&G::text_node(&x.text));
-                             el
-                             }))
+            ul {
+                Keyed {
+                    iterable: node_vect,
+                    view: |cx, x| view! { cx,
+                        // li { (x.tag) }
+
+                         (View::new_node(
+                             {
+                                 let el = G::element_from_tag(&x.tag);
+                                 el.append_child(&G::text_node(&x.text));
+                                 el
+                                 }))
+                    }
+
+                    ,
+                    key: |x| x.id,
                 }
 
-                ,
-                key: |x| x.id,
             }
 
-        }
+    //
 
-    }
+        }
 }
-//
+
+#[component]
+fn EditableDiv<G: Html>(cx: Scope) -> View<G> {
+    view! { cx,
+          p {
+              "Editable Div"
+          }
+
+              div (class="content-area") {
+      div (class="visuell-view", contenteditable=true) {"eeeeee"}
+    }
+
+      }
+}
+// updateyyy
 
 #[component]
 pub fn Copyright<G: Html>(cx: Scope) -> View<G> {

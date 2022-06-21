@@ -393,6 +393,10 @@ function getImports() {
         var v0 = getCachedStringFromWasm0(arg1, arg2);
         getObject(arg0).className = v0;
     }, arguments) };
+    imports.wbg.__wbg_createTextNode_323b5cf6b48a5c6c = function(arg0, arg1) {
+        const ret = getObject(arg0).createTextNode(arg1);
+        return addHeapObject(ret);
+    };
     imports.wbg.__wbindgen_is_falsy = function(arg0) {
         const ret = !getObject(arg0);
         return ret;
@@ -779,12 +783,12 @@ imports.wbg.__wbindgen_memory = function() {
     const ret = wasm.memory;
     return addHeapObject(ret);
 };
-imports.wbg.__wbindgen_closure_wrapper3186 = function(arg0, arg1, arg2) {
-    const ret = makeMutClosure(arg0, arg1, 175, __wbg_adapter_34);
+imports.wbg.__wbindgen_closure_wrapper3834 = function(arg0, arg1, arg2) {
+    const ret = makeMutClosure(arg0, arg1, 188, __wbg_adapter_34);
     return addHeapObject(ret);
 };
-imports.wbg.__wbindgen_closure_wrapper5430 = function(arg0, arg1, arg2) {
-    const ret = makeMutClosure(arg0, arg1, 246, __wbg_adapter_37);
+imports.wbg.__wbindgen_closure_wrapper6081 = function(arg0, arg1, arg2) {
+    const ret = makeMutClosure(arg0, arg1, 259, __wbg_adapter_37);
     return addHeapObject(ret);
 };
 
@@ -819,7 +823,7 @@ function initSync(bytes) {
 
 async function init(input) {
     if (typeof input === 'undefined') {
-        input = new URL('nyctograph-55d3e08c75839857_bg.wasm', import.meta.url);
+        input = new URL('nyctograph-99d4ae85a0564018_bg.wasm', import.meta.url);
     }
     const imports = getImports();
 
