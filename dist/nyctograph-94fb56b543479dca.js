@@ -823,7 +823,7 @@ function initSync(bytes) {
 
 async function init(input) {
     if (typeof input === 'undefined') {
-        input = new URL('nyctograph-99d4ae85a0564018_bg.wasm', import.meta.url);
+        input = new URL('nyctograph-94fb56b543479dca_bg.wasm', import.meta.url);
     }
     const imports = getImports();
 

@@ -245,31 +245,31 @@ fn TextNodes<G: Html>(cx: Scope<'_>) -> View<G> {
     });
 
     view! { cx,
-                            p(){(format!("----"))}
+                                p(){(format!("----"))}
+    // test spin
+                ul {
+                    Keyed {
+                        iterable: node_vect,
+                        view: |cx, x| view! { cx,
+                            // li { (x.tag) }
 
-            ul {
-                Keyed {
-                    iterable: node_vect,
-                    view: |cx, x| view! { cx,
-                        // li { (x.tag) }
+                             (View::new_node(
+                                 {
+                                     let el = G::element_from_tag(&x.tag);
+                                     el.append_child(&G::text_node(&x.text));
+                                     el
+                                     }))
+                        }
 
-                         (View::new_node(
-                             {
-                                 let el = G::element_from_tag(&x.tag);
-                                 el.append_child(&G::text_node(&x.text));
-                                 el
-                                 }))
+                        ,
+                        key: |x| x.id,
                     }
 
-                    ,
-                    key: |x| x.id,
                 }
 
+        //
+
             }
-
-    //
-
-        }
 }
 
 #[component]
