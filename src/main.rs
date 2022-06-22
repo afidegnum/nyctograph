@@ -3,6 +3,7 @@ use serde::Deserialize;
 use serde::Serialize;
 // use std::rc::Rc;
 // use sycamore::futures::spawn_local_scoped;
+use sycamore::futures::spawn_local_scoped;
 use sycamore::prelude::*;
 use sycamore::suspense::{use_transition, Suspense};
 use uuid::Uuid;
@@ -16,7 +17,7 @@ pub struct JsonFrontDom {
     pub uuid: Uuid,
     pub tag: String,
     pub text: String,
-    pub order: u16,
+    pub order: u32,
 }
 
 // -
@@ -25,7 +26,7 @@ pub struct JsonNode {
     pub d_uuid: Uuid,
     pub d_tag: String,
     pub d_text: String,
-    pub order: u16,
+    pub order: u32,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -33,7 +34,7 @@ pub struct JsonDom<'a> {
     pub uuid: Uuid,
     pub tag: &'a str,
     pub text: &'a str,
-    pub order: u16,
+    pub order: u32,
 }
 
 //-
@@ -44,7 +45,7 @@ pub struct DomRecord {
     pub uuid: Uuid,
     pub tag: String,
     pub text: String,
-    pub order: u16,
+    pub order: u32,
 }
 
 #[derive(Debug, Default, Clone)]
@@ -91,7 +92,7 @@ async fn dom_db() -> Rexie {
     rexie.unwrap()
 }
 
-async fn insert_node(rexie: &Rexie, tag: &str, text: &str, order: u16) -> Result<u32> {
+async fn insert_node(rexie: &Rexie, tag: &str, text: &str, order: u32) -> Result<u32> {
     let transaction = rexie.transaction(&["domnodes"], TransactionMode::ReadWrite);
     assert!(transaction.is_ok());
     let transaction = transaction.unwrap();
@@ -198,11 +199,11 @@ async fn App<G: Html>(cx: Scope<'_>) -> View<G> {
     // Initialize application state
 
     let idb = dom_db().await;
-    clear_node_records(&idb).await.unwrap();
-    insert_node(&idb, "h3", "This Text", 0).await.unwrap();
-    insert_node(&idb, "h1", "Another Text Text", 1)
-        .await
-        .unwrap();
+    // clear_node_records(&idb).await.unwrap();
+    // insert_node(&idb, "h3", "This Text", 0).await.unwrap();
+    // insert_node(&idb, "h1", "Another Text Text", 1)
+    //     .await
+    //     .unwrap();
 
     let node_list = node_query(&idb, None).await.unwrap();
 
@@ -229,8 +230,9 @@ async fn App<G: Html>(cx: Scope<'_>) -> View<G> {
                 // }
                 p(){"Welcome"}
     //    ElmInput{}
-                                EditableDiv{}
+
                 TextNodes{}
+                                EditableDiv{}
 
 
                             Copyright {}
@@ -279,55 +281,63 @@ fn TextNodes<G: Html>(cx: Scope<'_>) -> View<G> {
 }
 
 #[component]
-pub fn EditableDiv<G: Html>(cx: Scope) -> View<G> {
+async fn EditableDiv<G: Html>(cx: Scope<'_>) -> View<G> {
     let editing = create_signal(cx, false);
     let elem_ref = create_node_ref(cx);
+    // A trigger to force the signal to update.
+    let trigger = create_signal(cx, ());
 
+    // count_employees(&rexie, None).await;
+    let idb = dom_db().await;
+    let idb = create_ref(cx, idb);
+    let nb_of_records = count_node_records(&idb, None).await.unwrap();
+
+    log::debug!("Node Content:  {:#?}", nb_of_records);
     let handle_dblclick = move |_| {
         editing.set(true);
     };
 
-    let handle_enter = |event: Event| {
+    let handle_enter = move |event: Event| {
         let event: KeyboardEvent = event.unchecked_into();
 
-        // if event.key() == "Enter" {
-        //     editing.set(false);
-        //     let txt = elem_ref
-        //         .get::<DomNode>()
-        //         .unchecked_into::<HtmlInputElement>()
-        //         .inner_text();
-        //     log::debug!("Node Content:  {:#?}", txt);
-        // }
-
         if event.key() == "Enter" {
-            editing.set(false);
-            let txt = elem_ref
-                .get::<DomNode>()
-                .unchecked_into::<HtmlElement>()
-                .inner_text();
-            log::debug!("Node Content:  {:#?}", txt);
+            // editing.set(false);
+            // let txt = elem_ref
+            //     .get::<DomNode>()
+            //     .unchecked_into::<HtmlElement>()
+            //     .inner_text();
+
+            // insert_node(&idb, "h4", &txt, nb_of_records + 1)
+            //     .await
+            //     .unwrap();
+            // log::debug!("Node Content:  {:#?}", txt);
+            // trigger.set(());
+
+            spawn_local_scoped(cx, async move {
+                // // let _ = btn_insert_node;
+                // // let idb = &idb;
+                // insert_node(&idb, "h3", "This Text", 4).await.unwrap();
+                // trigger.set(());
+
+                editing.set(false);
+                let txt = elem_ref
+                    .get::<DomNode>()
+                    .unchecked_into::<HtmlElement>()
+                    .inner_text();
+
+                let ins = insert_node(&idb, "h4", &txt, nb_of_records + 1)
+                    .await
+                    .unwrap();
+                log::debug!("Node Records:  {:#?}", nb_of_records + 1);
+                log::debug!("Node Records:  {:#?}", ins);
+                trigger.set(());
+            })
         }
     };
 
-    // let elem_content = || {
-    //     if let Some(txt) = elem_ref
-    //         .get::<DomNode>()
-    //         .unchecked_into::<HtmlElement>()
-    //         .text_content()
-    //     {
-    //         log::debug!("Node Content:  {:#?}", txt);
-    //     }
-    // };
-
-    // let elem_content = elem_ref
-    //     .get::<DomNode>()
-    //     .unchecked_into::<HtmlElement>()
-    //     .inner_text();
-
-    // log::debug!("Node Content:  {:#?}", elem_content);
     view! { cx,
               p {
-                  "Editable Div"
+                  "Editable Div: Double Click to Edit and Press Enter to Insert"
               }
 
                   div (class="content-area") {

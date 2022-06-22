@@ -587,8 +587,12 @@ imports.wbg.__wbg_add_47b1ef3a81b7402b = function() { return handleError(functio
     const ret = getObject(arg0).add(getObject(arg1), getObject(arg2));
     return addHeapObject(ret);
 }, arguments) };
-imports.wbg.__wbg_clear_4ef535d5fd12c62a = function() { return handleError(function (arg0) {
-    const ret = getObject(arg0).clear();
+imports.wbg.__wbg_count_b50e0883089596e1 = function() { return handleError(function (arg0) {
+    const ret = getObject(arg0).count();
+    return addHeapObject(ret);
+}, arguments) };
+imports.wbg.__wbg_count_56b38e967f726e08 = function() { return handleError(function (arg0, arg1) {
+    const ret = getObject(arg0).count(getObject(arg1));
     return addHeapObject(ret);
 }, arguments) };
 imports.wbg.__wbg_createIndex_ff2e8590dd986c72 = function() { return handleError(function (arg0, arg1, arg2, arg3, arg4) {
@@ -809,16 +813,16 @@ imports.wbg.__wbindgen_memory = function() {
     const ret = wasm.memory;
     return addHeapObject(ret);
 };
-imports.wbg.__wbindgen_closure_wrapper202 = function(arg0, arg1, arg2) {
-    const ret = makeMutClosure(arg0, arg1, 129, __wbg_adapter_34);
+imports.wbg.__wbindgen_closure_wrapper203 = function(arg0, arg1, arg2) {
+    const ret = makeMutClosure(arg0, arg1, 150, __wbg_adapter_34);
     return addHeapObject(ret);
 };
-imports.wbg.__wbindgen_closure_wrapper4020 = function(arg0, arg1, arg2) {
-    const ret = makeMutClosure(arg0, arg1, 208, __wbg_adapter_37);
+imports.wbg.__wbindgen_closure_wrapper4160 = function(arg0, arg1, arg2) {
+    const ret = makeMutClosure(arg0, arg1, 229, __wbg_adapter_37);
     return addHeapObject(ret);
 };
-imports.wbg.__wbindgen_closure_wrapper6301 = function(arg0, arg1, arg2) {
-    const ret = makeMutClosure(arg0, arg1, 279, __wbg_adapter_40);
+imports.wbg.__wbindgen_closure_wrapper6441 = function(arg0, arg1, arg2) {
+    const ret = makeMutClosure(arg0, arg1, 300, __wbg_adapter_40);
     return addHeapObject(ret);
 };
 
@@ -853,7 +857,7 @@ function initSync(bytes) {
 
 async function init(input) {
     if (typeof input === 'undefined') {
-        input = new URL('nyctograph-8e3526081bee2185_bg.wasm', import.meta.url);
+        input = new URL('nyctograph-6abd6d891197e64e_bg.wasm', import.meta.url);
     }
     const imports = getImports();
 
