@@ -14,7 +14,7 @@ serde = { version = "1.0.136", features = ["derive"] }
 serde_json = "1.0.79"
 sycamore = { version = "0.8.0-beta.6", features = ["serde", "suspense"] }
 uuid = { version = "0.8.2", features = ["serde", "v4", "wasm-bindgen"] }
-wasm-bindgen = "0.2.79"
+wasm-bindgen = "0.2.81"
 rexie = "0.4"
 serde-wasm-bindgen = "0.4.3"
 num-traits = { version = "0.2.15", default-features = false }
@@ -22,7 +22,8 @@ num-traits = { version = "0.2.15", default-features = false }
 [dependencies.web-sys]
 features = ["InputEvent", "KeyboardEvent", "Location", "Storage", 'Document',
   'Element',
-  'HtmlElement',
+  'HtmlElement', 'HtmlInputElement',
   'Node',
   'Window', 'IdbFactory',]
 version = "0.3.56"
+

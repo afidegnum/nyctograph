@@ -7,6 +7,9 @@ use sycamore::prelude::*;
 use sycamore::suspense::{use_transition, Suspense};
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
+use wasm_bindgen::JsCast;
+
+use web_sys::{Event, HtmlElement, HtmlInputElement, KeyboardEvent};
 
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct JsonFrontDom {
@@ -218,19 +221,22 @@ async fn App<G: Html>(cx: Scope<'_>) -> View<G> {
     });
 
     view! { cx,
-        div(class="todomvc-wrapper") {
-            // section(class="todoapp") {
-            //     Header {}
-            //     List {}
-            //     Footer {}
-            // }
-            p(){"Welcome"}
-            Copyright {}
-            TextNodes{}
-        }
-    }
-}
+            div(class="todomvc-wrapper") {
+                // section(class="todoapp") {
+                //     Header {}
+                //     List {}
+                //     Footer {}
+                // }
+                p(){"Welcome"}
+    //    ElmInput{}
+                                EditableDiv{}
+                TextNodes{}
 
+
+                            Copyright {}
+            }
+        }
+}
 #[component]
 fn TextNodes<G: Html>(cx: Scope<'_>) -> View<G> {
     let app_state = use_context::<AppState>(cx);
@@ -246,7 +252,7 @@ fn TextNodes<G: Html>(cx: Scope<'_>) -> View<G> {
 
     view! { cx,
                                 p(){(format!("----"))}
-    // test spin
+    // test
                 ul {
                     Keyed {
                         iterable: node_vect,
@@ -273,19 +279,95 @@ fn TextNodes<G: Html>(cx: Scope<'_>) -> View<G> {
 }
 
 #[component]
-fn EditableDiv<G: Html>(cx: Scope) -> View<G> {
+pub fn EditableDiv<G: Html>(cx: Scope) -> View<G> {
+    let editing = create_signal(cx, false);
+    let elem_ref = create_node_ref(cx);
+
+    let handle_dblclick = move |_| {
+        editing.set(true);
+    };
+
+    let handle_enter = |event: Event| {
+        let event: KeyboardEvent = event.unchecked_into();
+
+        // if event.key() == "Enter" {
+        //     editing.set(false);
+        //     let txt = elem_ref
+        //         .get::<DomNode>()
+        //         .unchecked_into::<HtmlInputElement>()
+        //         .inner_text();
+        //     log::debug!("Node Content:  {:#?}", txt);
+        // }
+
+        if event.key() == "Enter" {
+            editing.set(false);
+            let txt = elem_ref
+                .get::<DomNode>()
+                .unchecked_into::<HtmlElement>()
+                .inner_text();
+            log::debug!("Node Content:  {:#?}", txt);
+        }
+    };
+
+    // let elem_content = || {
+    //     if let Some(txt) = elem_ref
+    //         .get::<DomNode>()
+    //         .unchecked_into::<HtmlElement>()
+    //         .text_content()
+    //     {
+    //         log::debug!("Node Content:  {:#?}", txt);
+    //     }
+    // };
+
+    // let elem_content = elem_ref
+    //     .get::<DomNode>()
+    //     .unchecked_into::<HtmlElement>()
+    //     .inner_text();
+
+    // log::debug!("Node Content:  {:#?}", elem_content);
     view! { cx,
-          p {
-              "Editable Div"
-          }
+              p {
+                  "Editable Div"
+              }
 
-              div (class="content-area") {
-      div (class="visuell-view", contenteditable=true) {"eeeeee"}
+                  div (class="content-area") {
+          div (ref=elem_ref, class="visuell-view", contenteditable=*editing.get(), on:dblclick=handle_dblclick, on:keyup=handle_enter  ) {"eeeeee"}
+
     }
-
-      }
+    }
 }
-// updateyyy
+//updateyyy
+#[component]
+pub fn ElmInput<G: Html>(cx: Scope) -> View<G> {
+    let app_state = use_context::<AppState>(cx);
+    let value = create_signal(cx, String::new());
+    let input_ref = create_node_ref(cx);
+
+    let handle_submit = |event: Event| {
+        let event: KeyboardEvent = event.unchecked_into();
+
+        if event.key() == "Enter" {
+            log::debug!(
+                "Node Content:  {:#?}",
+                input_ref
+                    .get::<DomNode>()
+                    .unchecked_into::<HtmlInputElement>()
+                    .value()
+            );
+        }
+    };
+
+    view! { cx,
+        header(class="header") {
+            h1 { "todos" }
+            input(ref=input_ref,
+                class="new-todo",
+                placeholder="What needs to be done?",
+                on:keyup=handle_submit,
+            )
+        }
+    }
+}
 
 #[component]
 pub fn Copyright<G: Html>(cx: Scope) -> View<G> {
@@ -303,20 +385,6 @@ pub fn Copyright<G: Html>(cx: Scope) -> View<G> {
         }
     }
 }
-
-// #[component]
-// fn App<G: Html>(cx: Scope) -> View<G> {
-//     view! { cx,
-//         div {
-//             "Component demo"
-
-//             // NodeAdd()
-
-//                 MyDomNodes()
-
-//         }
-//     }
-// }
 
 fn main() {
     console_error_panic_hook::set_once();
