@@ -337,11 +337,11 @@ async fn EditableDiv<G: Html>(cx: Scope<'_>) -> View<G> {
 
     view! { cx,
               p {
-                  "Editable Div: Double Click to Edit and Press Enter to Insert"
+                  "Editable Div:"
               }
 
                   div (class="content-area") {
-          div (ref=elem_ref, class="visuell-view", contenteditable=*editing.get(), on:dblclick=handle_dblclick, on:keyup=handle_enter  ) {"eeeeee"}
+          div (ref=elem_ref, class="visuell-view", contenteditable=*editing.get(), on:dblclick=handle_dblclick, on:keyup=handle_enter  ) {"double-click to edit, Press Enter to save."}
 
     }
     }
